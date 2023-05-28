@@ -6,8 +6,8 @@ This is the README file for an AI Chess Program. This program allows you to play
 
 - Play chess against an AI opponent or against another human player.
 - Undo moves and reset the game.
-- Change the player's turn and switch between playing as white or black.
-- Customize the board colors.
+- Switch between playing as white or black.
+- Customize the board colors by choosing between 4 different color themes.
 
 ## Requirements
 
@@ -44,7 +44,6 @@ The game will open in a Pygame window. You can make moves by clicking on the che
   - '2': Set board colors to white and gray.
   - '3': Set board colors to brown and beige.
   - '4': Set board colors to beige and dark olive green.
-  - 'f': (Not implemented) Additional feature.
 
 ## Credits
 
