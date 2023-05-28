@@ -1,6 +1,6 @@
 # ChessAI-v2.0
 
-This is the README file for the AI Chess Program. This program allows you to play chess against an AI opponent or against another human player. It is built using Python and the Pygame library.
+This is the README file for an AI Chess Program. This program allows you to play chess against an AI opponent or against another human player. It is built using Python and the Pygame library.
 
 ## Features
 
