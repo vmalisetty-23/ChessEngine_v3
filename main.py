@@ -5,17 +5,11 @@ Displaying current GameStatus object.
 """
 import pygame as py
 import asyncio
-import game, moves
+import game
+import moves
 import sys
 from multiprocessing import Process, Queue
-
-BOARD_WIDTH = BOARD_HEIGHT = 800
-NOTATION_PANEL_WIDTH = 250
-NOTATION_PANEL_HEIGHT = BOARD_HEIGHT
-NUM_ROWS = NUM_COLS = 8
-SQUARE_SIZE = BOARD_HEIGHT // NUM_COLS
-MAX_FPS = 15
-IMAGES = {}
+from const import *
 
 
 def loadPieces():
@@ -49,7 +43,7 @@ async def main():
     ai_thinking = False
     move_undone = False
     move_finder_process = None
-    move_log_font = py.font.SysFont("Times New Roman", 16, False, False)
+    notation_font = py.font.SysFont("Times New Roman", 16, False, False)
 
     # default: White Player vs. AI
     player_one = True
@@ -193,7 +187,7 @@ async def main():
 
         if move_made:
             if animate:
-                animateMove(game_state.move_log[-1], screen, game_state.board, clock)
+                animateMove(game_state.notation[-1], screen, game_state.board, clock)
             valid_moves = game_state.getValidMoves()
             move_made = False
             animate = False
@@ -202,7 +196,7 @@ async def main():
         drawGameState(screen, game_state, valid_moves, square_selected)
 
         if not game_over:
-            drawMoveLog(screen, game_state, move_log_font)
+            drawMoveLog(screen, game_state, notation_font)
 
         if game_state.checkmate:
             game_over = True
@@ -246,8 +240,8 @@ def highlightSquares(screen, game_state, valid_moves, square_selected):
     """
     Highlight square selected and moves for piece selected.
     """
-    if (len(game_state.move_log)) > 0:
-        last_move = game_state.move_log[-1]
+    if (len(game_state.notation)) > 0:
+        last_move = game_state.notation[-1]
         s = py.Surface((SQUARE_SIZE, SQUARE_SIZE))
         s.set_alpha(100)
         s.fill(py.Color('green'))
@@ -270,7 +264,7 @@ def highlightSquares(screen, game_state, valid_moves, square_selected):
 
 def drawPieces(screen, board):
     """
-    Draw the pieces on the board using the current game_state.board
+    Draw the pieces on the board using the current game.board
     """
     for row in range(NUM_ROWS):
         for column in range(NUM_COLS):
@@ -284,14 +278,14 @@ def drawMoveLog(screen, game_state, font):
     Draws the move log.
 
     """
-    move_log_rect = py.Rect(BOARD_WIDTH, 0, NOTATION_PANEL_WIDTH, NOTATION_PANEL_HEIGHT)
-    py.draw.rect(screen, py.Color('black'), move_log_rect)
-    move_log = game_state.move_log
+    notation_rect = py.Rect(BOARD_WIDTH, 0, NOTATION_PANEL_WIDTH, NOTATION_PANEL_HEIGHT)
+    py.draw.rect(screen, py.Color('white'), notation_rect)
+    notation = game_state.notation
     move_texts = []
-    for i in range(0, len(move_log), 2):
-        move_string = str(i // 2 + 1) + '. ' + str(move_log[i]) + " "
-        if i + 1 < len(move_log):
-            move_string += str(move_log[i + 1]) + "  "
+    for i in range(0, len(notation), 2):
+        move_string = str(i // 2 + 1) + '. ' + str(notation[i]) + " "
+        if i + 1 < len(notation):
+            move_string += str(notation[i + 1]) + "  "
         move_texts.append(move_string)
 
     moves_per_row = 3
@@ -304,8 +298,8 @@ def drawMoveLog(screen, game_state, font):
             if i + j < len(move_texts):
                 text += move_texts[i + j]
 
-        text_object = font.render(text, True, py.Color('white'))
-        text_location = move_log_rect.move(padding, text_y)
+        text_object = font.render(text, True, py.Color('black'))
+        text_location = notation_rect.move(padding, text_y)
         screen.blit(text_object, text_location)
         text_y += text_object.get_height() + line_spacing
 
