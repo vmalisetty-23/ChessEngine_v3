@@ -10,22 +10,22 @@ import sys
 from multiprocessing import Process, Queue
 
 BOARD_WIDTH = BOARD_HEIGHT = 800
-MOVE_LOG_PANEL_WIDTH = 250
-MOVE_LOG_PANEL_HEIGHT = BOARD_HEIGHT
-DIMENSION = 8
-SQUARE_SIZE = BOARD_HEIGHT // DIMENSION
+NOTATION_PANEL_WIDTH = 250
+NOTATION_PANEL_HEIGHT = BOARD_HEIGHT
+NUM_ROWS = NUM_COLS = 8
+SQUARE_SIZE = BOARD_HEIGHT // NUM_COLS
 MAX_FPS = 15
 IMAGES = {}
 
 
-def loadImages():
+def loadPieces():
     """
     Initialize a global directory of images.
     This will be called exactly once in the main.
     """
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
-        IMAGES[piece] = py.transform.scale(py.image.load("images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE))
+        IMAGES[piece] = py.transform.scale(py.image.load("images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE)) # loads images from images folder
 
 
 async def main():
@@ -35,14 +35,13 @@ async def main():
     """
     py.init()
     py.display.set_caption('AI Chess Program (White) - Vasishta Malisetty')
-    screen = py.display.set_mode((BOARD_WIDTH + MOVE_LOG_PANEL_WIDTH, BOARD_HEIGHT))
+    screen = py.display.set_mode((BOARD_WIDTH + NOTATION_PANEL_WIDTH, BOARD_HEIGHT))
     clock = py.time.Clock()
-    screen.fill(py.Color("white"))
     game_state = game.GameState()
     valid_moves = game_state.getValidMoves()
     move_made = False  # flag variable for when a move is made
     animate = False  # flag variable for when we should animate a move
-    loadImages()  # do this only once before while loop
+    loadPieces()  # do this only once before while loop
     running = True
     square_selected = ()  # no square is selected initially, this will keep track of the last click of the user (tuple(row,col))
     player_clicks = []  # this will keep track of player clicks (two tuples)
@@ -51,10 +50,14 @@ async def main():
     move_undone = False
     move_finder_process = None
     move_log_font = py.font.SysFont("Times New Roman", 16, False, False)
-    player_one = True  # if a human is playing white, then this will be True, else False
-    player_two = False  # if a human is playing black, then this will be True, else False
+
+    # default: White Player vs. AI
+    player_one = True
+    player_two = False 
+
+    # default board colors
     global x 
-    x = "beige"
+    x = "beige" 
     global y 
     y = "dark olive green"
 
@@ -233,8 +236,8 @@ def drawBoard(screen):
     """
     global colors
     colors = [py.Color(x), py.Color(y)]
-    for row in range(DIMENSION):
-        for column in range(DIMENSION):
+    for row in range(NUM_ROWS):
+        for column in range(NUM_COLS):
             color = colors[((row + column) % 2)]
             py.draw.rect(screen, color, py.Rect(column * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
@@ -269,8 +272,8 @@ def drawPieces(screen, board):
     """
     Draw the pieces on the board using the current game_state.board
     """
-    for row in range(DIMENSION):
-        for column in range(DIMENSION):
+    for row in range(NUM_ROWS):
+        for column in range(NUM_COLS):
             piece = board[row][column]
             if piece != "--":
                 screen.blit(IMAGES[piece], py.Rect(column * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
@@ -281,7 +284,7 @@ def drawMoveLog(screen, game_state, font):
     Draws the move log.
 
     """
-    move_log_rect = py.Rect(BOARD_WIDTH, 0, MOVE_LOG_PANEL_WIDTH, MOVE_LOG_PANEL_HEIGHT)
+    move_log_rect = py.Rect(BOARD_WIDTH, 0, NOTATION_PANEL_WIDTH, NOTATION_PANEL_HEIGHT)
     py.draw.rect(screen, py.Color('black'), move_log_rect)
     move_log = game_state.move_log
     move_texts = []
