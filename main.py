@@ -37,7 +37,7 @@ async def main():
     py.display.set_caption('AI Chess Program (White) - Vasishta Malisetty')
     screen = py.display.set_mode((BOARD_WIDTH + NOTATION_PANEL_WIDTH, BOARD_HEIGHT))
     clock = py.time.Clock()
-    game_state = game.GameState()
+    game_state = game.Game()
     valid_moves = game_state.getValidMoves()
     move_made = False  # flag variable for when a move is made
     animate = False  # flag variable for when we should animate a move
@@ -103,7 +103,7 @@ async def main():
                         ai_thinking = False
                     move_undone = True
                 if e.key == py.K_r:  # reset the game when 'r' is pressed
-                    game_state = game.GameState()
+                    game_state = game.Game()
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
                     player_clicks = []
@@ -118,7 +118,7 @@ async def main():
                     move_undone = True
                 if e.key == py.K_b:
                     py.display.set_caption('AI Chess Program (Black) - Vasishta Malisetty')
-                    game_state = game.GameState()
+                    game_state = game.Game()
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
                     player_clicks = []
@@ -129,7 +129,7 @@ async def main():
                     player_two = True
                 if e.key == py.K_w:
                     py.display.set_caption('AI Chess Program (White) - Vasishta Malisetty')
-                    game_state = game.GameState()
+                    game_state = game.Game()
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
                     player_clicks = []
@@ -144,7 +144,7 @@ async def main():
                     move_undone = True
                 if e.key == py.K_p:
                     py.display.set_caption('AI Chess Program (PvP) - Vasishta Malisetty')
-                    game_state = game.GameState()
+                    game_state = game.Game()
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
                     player_clicks = []
