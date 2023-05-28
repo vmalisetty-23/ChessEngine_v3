@@ -5,7 +5,7 @@ It will keep move log.
 """
 
 
-class GameState:
+class Game:
     def __init__(self):
         """
         Board is an 8x8 2d list, each element in list has 2 characters.
@@ -22,8 +22,7 @@ class GameState:
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
-        self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N": self.getKnightMoves,
-                              "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
+        self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N": self.getKnightMoves, "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
         self.white_to_move = True
         self.move_log = []
         self.white_king_location = (7, 4)
@@ -36,8 +35,7 @@ class GameState:
         self.enpassant_possible = ()  # coordinates for the square where en-passant capture is possible
         self.enpassant_possible_log = [self.enpassant_possible]
         self.current_castling_rights = CastleRights(True, True, True, True)
-        self.castle_rights_log = [CastleRights(self.current_castling_rights.wks, self.current_castling_rights.bks,
-                                               self.current_castling_rights.wqs, self.current_castling_rights.bqs)]
+        self.castle_rights_log = [CastleRights(self.current_castling_rights.wks, self.current_castling_rights.bks, self.current_castling_rights.wqs, self.current_castling_rights.bqs)]
 
     def makeMove(self, move):
         """
@@ -161,8 +159,7 @@ class GameState:
         """
         All moves considering checks.
         """
-        temp_castle_rights = CastleRights(self.current_castling_rights.wks, self.current_castling_rights.bks,
-                                          self.current_castling_rights.wqs, self.current_castling_rights.bqs)
+        temp_castle_rights = CastleRights(self.current_castling_rights.wks, self.current_castling_rights.bks, self.current_castling_rights.wqs, self.current_castling_rights.bqs)
         # advanced algorithm
         moves = []
         self.in_check, self.pins, self.checks = self.checkForPinsAndChecks()
@@ -187,17 +184,14 @@ class GameState:
                     valid_squares = [(check_row, check_col)]
                 else:
                     for i in range(1, 8):
-                        valid_square = (king_row + check[2] * i,
-                                        king_col + check[3] * i)  # check[2] and check[3] are the check directions
+                        valid_square = (king_row + check[2] * i, king_col + check[3] * i)  # check[2] and check[3] are the check directions
                         valid_squares.append(valid_square)
-                        if valid_square[0] == check_row and valid_square[
-                            1] == check_col:  # once you get to piece and check
+                        if valid_square[0] == check_row and valid_square[1] == check_col:  # once you get to piece and check
                             break
                 # get rid of any moves that don't block check or move king
                 for i in range(len(moves) - 1, -1, -1):  # iterate through the list backwards when removing elements
                     if moves[i].piece_moved[1] != "K":  # move doesn't move king so it must block or capture
-                        if not (moves[i].end_row,
-                                moves[i].end_col) in valid_squares:  # move doesn't block or capture piece
+                        if not (moves[i].end_row, moves[i].end_col) in valid_squares:  # move doesn't block or capture piece
                             moves.remove(moves[i])
             else:  # double check, king has to move
                 self.getKingMoves(king_row, king_col, moves)
@@ -411,8 +405,7 @@ class GameState:
             if self.pins[i][0] == row and self.pins[i][1] == col:
                 piece_pinned = True
                 pin_direction = (self.pins[i][2], self.pins[i][3])
-                if self.board[row][col][
-                    1] != "Q":  # can't remove queen from pin on rook moves, only remove it on bishop moves
+                if self.board[row][col][1] != "Q":  # can't remove queen from pin on rook moves, only remove it on bishop moves
                     self.pins.remove(self.pins[i])
                 break
 
@@ -532,11 +525,9 @@ class GameState:
         """
         if self.squareUnderAttack(row, col):
             return  # can't castle while in check
-        if (self.white_to_move and self.current_castling_rights.wks) or (
-                not self.white_to_move and self.current_castling_rights.bks):
+        if (self.white_to_move and self.current_castling_rights.wks) or (not self.white_to_move and self.current_castling_rights.bks):
             self.getKingsideCastleMoves(row, col, moves)
-        if (self.white_to_move and self.current_castling_rights.wqs) or (
-                not self.white_to_move and self.current_castling_rights.bqs):
+        if (self.white_to_move and self.current_castling_rights.wqs) or (not self.white_to_move and self.current_castling_rights.bqs):
             self.getQueensideCastleMoves(row, col, moves)
 
     def getKingsideCastleMoves(self, row, col, moves):
