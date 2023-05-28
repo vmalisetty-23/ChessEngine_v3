@@ -48,7 +48,7 @@ The game will open in a Pygame window. You can make moves by clicking on the che
 
 ## Credits
 
-This AI Chess Program is created by Vasishta Malisetty and inspired by Eddie Sharick
+This AI Chess Program is created by Vasishta Malisetty and inspired by Eddie Sharick.
 
 ## License
 
