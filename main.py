@@ -1,5 +1,8 @@
 import pygame as py
-import asyncio, game, moves, sys
+import asyncio
+import game
+import moves
+import sys
 from multiprocessing import Process, Queue
 from const import *
 
