@@ -1,13 +1,5 @@
-"""
-Main driver file.
-Handling user input.
-Displaying current GameStatus object.
-"""
 import pygame as py
-import asyncio
-import game
-import moves
-import sys
+import asyncio, game, moves, sys
 from multiprocessing import Process, Queue
 from const import *
 
