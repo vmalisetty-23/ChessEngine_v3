@@ -1,10 +1,3 @@
-"""
-Storing all the information about the current state of chess game.
-Determining valid moves at current state.
-It will keep move log.
-"""
-
-
 class Game:
     def __init__(self):
         """
