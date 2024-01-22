@@ -1,3 +1,10 @@
+"""
+Storing all the information about the current state of chess game.
+Determining valid moves at current state.
+It will keep move log.
+"""
+
+
 class Game:
     def __init__(self):
         """
@@ -17,7 +24,7 @@ class Game:
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N": self.getKnightMoves, "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
         self.white_to_move = True
-        self.move_log = []
+        self.notation = []
         self.white_king_location = (7, 4)
         self.black_king_location = (0, 4)
         self.checkmate = False
@@ -37,7 +44,7 @@ class Game:
         """
         self.board[move.start_row][move.start_col] = "--"
         self.board[move.end_row][move.end_col] = move.piece_moved
-        self.move_log.append(move)  # log the move so we can undo it later
+        self.notation.append(move)  # log the move so we can undo it later
         self.white_to_move = not self.white_to_move  # switch players
         # update king's location if moved
         if move.piece_moved == "wK":
@@ -81,8 +88,8 @@ class Game:
         """
         Undo the last move
         """
-        if len(self.move_log) != 0:  # make sure that there is a move to undo
-            move = self.move_log.pop()
+        if len(self.notation) != 0:  # make sure that there is a move to undo
+            move = self.notation.pop()
             self.board[move.start_row][move.start_col] = move.piece_moved
             self.board[move.end_row][move.end_col] = move.piece_captured
             self.white_to_move = not self.white_to_move  # swap players

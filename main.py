@@ -1,3 +1,8 @@
+"""
+Main driver file.
+Handling user input.
+Displaying current GameStatus object.
+"""
 import pygame as py
 import asyncio
 import game
