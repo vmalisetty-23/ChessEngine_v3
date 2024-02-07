@@ -1,8 +1,3 @@
-"""
-Main driver file.
-Handling user input.
-Displaying current GameStatus object.
-"""
 import pygame as py
 import asyncio
 import game
@@ -13,43 +8,35 @@ from const import *
 
 
 def loadPieces():
-    """
-    Initialize a global directory of images.
-    This will be called exactly once in the main.
-    """
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
-        IMAGES[piece] = py.transform.scale(py.image.load("images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE)) # loads images from images folder
+        IMAGES[piece] = py.transform.scale(py.image.load("images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE)) 
 
 
 async def main():
-    """
-    The main driver for our code.
-    This will handle user input and updating the graphics.
-    """
     py.init()
     py.display.set_caption('AI Chess Program (White) - Vasishta Malisetty')
     screen = py.display.set_mode((BOARD_WIDTH + NOTATION_PANEL_WIDTH, BOARD_HEIGHT))
     clock = py.time.Clock()
     game_state = game.Game()
     valid_moves = game_state.getValidMoves()
-    move_made = False  # flag variable for when a move is made
-    animate = False  # flag variable for when we should animate a move
-    loadPieces()  # do this only once before while loop
+    move_made = False  
+    animate = False  
+    loadPieces()  
     running = True
-    square_selected = ()  # no square is selected initially, this will keep track of the last click of the user (tuple(row,col))
-    player_clicks = []  # this will keep track of player clicks (two tuples)
+    square_selected = ()  
+    player_clicks = []  
     game_over = False
     ai_thinking = False
     move_undone = False
     move_finder_process = None
     notation_font = py.font.SysFont("Times New Roman", 16, False, False)
 
-    # default: White Player vs. AI
+    
     player_one = True
     player_two = False 
 
-    # default board colors
+    
     global x 
     x = "beige" 
     global y 
@@ -61,33 +48,33 @@ async def main():
             if e.type == py.QUIT:
                 py.quit()
                 sys.exit()
-            # mouse handler
+           
             elif e.type == py.MOUSEBUTTONDOWN:
                 if not game_over:
-                    location = py.mouse.get_pos()  # (x, y) location of the mouse
+                    location = py.mouse.get_pos()  
                     col = location[0] // SQUARE_SIZE
                     row = location[1] // SQUARE_SIZE
-                    if square_selected == (row, col) or col >= 8:  # user clicked the same square twice
-                        square_selected = ()  # deselect
-                        player_clicks = []  # clear clicks
+                    if square_selected == (row, col) or col >= 8:  
+                        square_selected = ()  
+                        player_clicks = []  
                     else:
                         square_selected = (row, col)
-                        player_clicks.append(square_selected)  # append for both 1st and 2nd click
-                    if len(player_clicks) == 2 and human_turn:  # after 2nd click
+                        player_clicks.append(square_selected)  
+                    if len(player_clicks) == 2 and human_turn:  
                         move = game.Move(player_clicks[0], player_clicks[1], game_state.board)
                         for i in range(len(valid_moves)):
                             if move == valid_moves[i]:
                                 game_state.makeMove(valid_moves[i])
                                 move_made = True
                                 animate = True
-                                square_selected = ()  # reset user clicks
+                                square_selected = ()  
                                 player_clicks = []
                         if not move_made:
                             player_clicks = [square_selected]
 
-            # key handler
+           
             elif e.type == py.KEYDOWN:
-                if e.key == py.K_u:  # undo when 'u' is pressed
+                if e.key == py.K_u:  
                     game_state.undoMove()
                     move_made = True
                     animate = False
@@ -96,7 +83,7 @@ async def main():
                         move_finder_process.terminate()
                         ai_thinking = False
                     move_undone = True
-                if e.key == py.K_r:  # reset the game when 'r' is pressed
+                if e.key == py.K_r:  
                     game_state = game.Game()
                     valid_moves = game_state.getValidMoves()
                     square_selected = ()
@@ -166,13 +153,10 @@ async def main():
                 if e.key == py.K_f:
                     pass
 
-
-
-        # AI move finder
         if not game_over and not human_turn and not move_undone:
             if not ai_thinking:
                 ai_thinking = True
-                return_queue = Queue()  # used to pass data between threads
+                return_queue = Queue()  
                 move_finder_process = Process(target=moves.findBestMove, args=(game_state, valid_moves, return_queue))
                 move_finder_process.start()
 
@@ -218,9 +202,9 @@ def drawGameState(screen, game_state, valid_moves, square_selected):
     """
     Responsible for all the graphics within current game state.
     """
-    drawBoard(screen)  # draw squares on the board
+    drawBoard(screen)  
     highlightSquares(screen, game_state, valid_moves, square_selected)
-    drawPieces(screen, game_state.board)  # draw pieces on top of those squares
+    drawPieces(screen, game_state.board)  
 
 
 def drawBoard(screen):
@@ -249,13 +233,12 @@ def highlightSquares(screen, game_state, valid_moves, square_selected):
     if square_selected != ():
         row, col = square_selected
         if game_state.board[row][col][0] == (
-                'w' if game_state.white_to_move else 'b'):  # square_selected is a piece that can be moved
-            # highlight selected square
+                'w' if game_state.white_to_move else 'b'):  
+           
             s = py.Surface((SQUARE_SIZE, SQUARE_SIZE))
-            s.set_alpha(100)  # transparency value 0 -> transparent, 255 -> opaque
+            s.set_alpha(100)  
             s.fill(py.Color('blue'))
             screen.blit(s, (col * SQUARE_SIZE, row * SQUARE_SIZE))
-            # highlight moves from that square
             s.fill(py.Color('yellow'))
             for move in valid_moves:
                 if move.start_row == row and move.start_col == col:
@@ -263,9 +246,6 @@ def highlightSquares(screen, game_state, valid_moves, square_selected):
 
 
 def drawPieces(screen, board):
-    """
-    Draw the pieces on the board using the current game.board
-    """
     for row in range(NUM_ROWS):
         for column in range(NUM_COLS):
             piece = board[row][column]
@@ -274,10 +254,6 @@ def drawPieces(screen, board):
 
 
 def drawMoveLog(screen, game_state, font):
-    """
-    Draws the move log.
-
-    """
     notation_rect = py.Rect(BOARD_WIDTH, 0, NOTATION_PANEL_WIDTH, NOTATION_PANEL_HEIGHT)
     py.draw.rect(screen, py.Color('white'), notation_rect)
     notation = game_state.notation
@@ -321,23 +297,23 @@ def animateMove(move, screen, board, clock):
     global colors
     d_row = move.end_row - move.start_row
     d_col = move.end_col - move.start_col
-    frames_per_square = 10  # frames to move one square
+    frames_per_square = 10  
     frame_count = (abs(d_row) + abs(d_col)) * frames_per_square
     for frame in range(frame_count + 1):
         row, col = (move.start_row + d_row * frame / frame_count, move.start_col + d_col * frame / frame_count)
         drawBoard(screen)
         drawPieces(screen, board)
-        # erase the piece moved from its ending square
+        
         color = colors[(move.end_row + move.end_col) % 2]
         end_square = py.Rect(move.end_col * SQUARE_SIZE, move.end_row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
         py.draw.rect(screen, color, end_square)
-        # draw captured piece onto rectangle
+        
         if move.piece_captured != '--':
             if move.is_enpassant_move:
                 enpassant_row = move.end_row + 1 if move.piece_captured[0] == 'b' else move.end_row - 1
                 end_square = py.Rect(move.end_col * SQUARE_SIZE, enpassant_row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
             screen.blit(IMAGES[move.piece_captured], end_square)
-        # draw moving piece
+        
         screen.blit(IMAGES[move.piece_moved], py.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
         py.display.flip()
         clock.tick(60)
